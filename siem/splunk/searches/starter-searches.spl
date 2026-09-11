@@ -1,0 +1,13 @@
+// Splunk starter searches — save one .spl per detection in siem/splunk/searches/
+// 1. Windows brute force (CIM Authentication)
+index=wazuh sourcetype=wineventlog:security EventCode=4625
+| bin _time span=2m
+| stats count as fails dc(TargetUserName) as users values(src_ip) as src by _time, dest
+| where fails>5
+
+// 2. Suspicious PowerShell (CIM Process_Creation)
+index=wazuh sourcetype=sysmon EventCode=1 Image="*powershell.exe" CommandLine IN ("*-enc*", "*-bypass*", "*IEX*")
+| table _time, dest, User, ParentImage, Image, CommandLine
+
+// TODO: convert each Wazuh rule → SPL here, then build 2 correlation searches in ../correlation-searches/
+// Correlation format: notable + risk_score + MITRE + recommended playbook in soar/playbooks/

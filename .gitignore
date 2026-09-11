@@ -1,0 +1,12 @@
+# SOC Lab ignores
+__pycache__/
+*.pyc
+.env
+*.log
+.wazuh/
+splunk-*.log
+.DS_Store
+Thumbs.db
+reports/final-report.pdf
+evidence/screenshots/*.png
+!evidence/screenshots/.gitkeep

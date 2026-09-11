@@ -1,0 +1,14 @@
+-- QRadar starter AQL — one file per use-case in siem/qradar/aql-queries/
+-- 1. Brute force: >5 failed logons from one source in 2 min
+SELECT sourceip, username, COUNT(*) as fails, MIN(starttime) as first, MAX(starttime) as last
+FROM events
+WHERE qidname(qid) ILIKE '%Failed%' AND LOGSOURCETYPENAME(logsourceid)='MicrosoftWindows'
+GROUP BY sourceip, username
+HAVING COUNT(*)>5
+LAST 2 HOURS
+
+-- 2. Suspicious PowerShell
+-- TODO: add AQL forEncoded PowerShell + parent process anomaly
+-- SELECT ... FROM events WHERE "ProcessName" ILIKE '%powershell%' AND "CommandLine" ILIKE '%-enc%'
+
+-- CRE pattern to document in ../cre-rules/: BB + Rule (test order) + Reference Set (malicious IPs) + Response (SOAR webhook)
